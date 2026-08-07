@@ -1,0 +1,7 @@
+*~
+*.DS_store
+node_modules
+
+_debug
+_metadata
+dist
