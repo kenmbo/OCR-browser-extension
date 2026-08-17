@@ -73,3 +73,18 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     }
   }
 });
+
+// --- Keep-Alive Port Connections ---
+
+browser.runtime.onConnect.addListener((port) => {
+  if (port.name !== 'ocr-keepalive') return;
+
+  const tabId = port.sender?.tab?.id;
+  if (!tabId) return;
+
+  activePorts.set(tabId, port);
+
+  port.onDisconnect.addListener(() => {
+    activePorts.delete(tabId);
+  });
+});

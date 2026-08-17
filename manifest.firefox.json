@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Local OCR Engine",
+  "version": "1.0.0",
+  "description": "100% offline, local OCR for images and screen regions.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus",
+    "clipboardWrite",
+    "notifications"
+  ],
+  "background": {
+    "scripts": ["vendor/browser-polyfill.min.js", "background/background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "local-ocr@extension.internal",
+      "strict_min_version": "140.0"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["vendor/browser-polyfill.min.js", "content/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "vendor/*",
+        "tessdata/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_title": "Select Region to OCR"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}
