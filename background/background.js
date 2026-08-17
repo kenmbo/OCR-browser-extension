@@ -99,3 +99,51 @@ function normalizeOcrText(rawText) {
     .replace(/\n{3,}/g, '\n\n')      // Collapse >= 3 newlines to 2
     .trim();                         // Trim leading/trailing overall whitespace
 }
+
+// --- FIFO Queue Processor ---
+
+async function processNextJob() {
+  if (isProcessing) return;
+
+  const { ocrQueue = [] } = await browser.storage.session.get('ocrQueue');
+  if (ocrQueue.length === 0) {
+    activeJob = null;
+    return;
+  }
+
+  isProcessing = true;
+  activeJob = ocrQueue.shift();
+  await browser.storage.session.set({ ocrQueue });
+
+  notifyTab(activeJob.tabId, {
+    type: 'OCR_START',
+    jobId: activeJob.id
+  });
+
+  try {
+    const worker = await getWorker();
+    const result = await worker.recognize(activeJob.imagePayload);
+
+    const formattedText = normalizeOcrText(result.data.text);
+    const confidence = Math.round(result.data.confidence || 0);
+
+    notifyTab(activeJob.tabId, {
+      type: 'OCR_COMPLETE',
+      jobId: activeJob.id,
+      text: formattedText,
+      confidence
+    });
+  } catch (error) {
+    if (activeJob) {
+      notifyTab(activeJob.tabId, {
+        type: 'OCR_ERROR',
+        jobId: activeJob.id,
+        error: error.message || 'Recognition failed.'
+      });
+    }
+  } finally {
+    isProcessing = false;
+    activeJob = null;
+    processNextJob();
+  }
+}
