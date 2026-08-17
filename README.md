@@ -11,7 +11,7 @@ This extension complies with Manifest V3 (MV3).
 
 * **Manifest CSP:** `"wasm-unsafe-eval"` included in `content_security_policy` for WebAssembly execution.
 
-* **Supported Browsers:** Firefox v109+ (stable MV3) and Chrome/Chromium v102+ (WASM SIMD, `storage.session`, `OffscreenCanvas`).
+* **Supported Browsers:** Firefox v140+, Chrome/Chromium v116+.
 
 * **Cross-Browser Polyfill:** Use Mozilla's `webextension-polyfill` (`browser.*` namespace).
 
