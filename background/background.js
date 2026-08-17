@@ -1,4 +1,4 @@
-**
+/**
  * Local OCR WebExtension - Background Queue & Worker Lifecycle
  */
 
@@ -88,3 +88,14 @@ browser.runtime.onConnect.addListener((port) => {
     activePorts.delete(tabId);
   });
 });
+
+// --- Text Normalization Pipeline ---
+
+function normalizeOcrText(rawText) {
+  if (!rawText) return '';
+  return rawText
+    .replace(/\r\n|\r/g, '\n')       // CRLF/CR -> LF
+    .replace(/[ \t]+$/gm, '')        // Strip trailing line whitespace
+    .replace(/\n{3,}/g, '\n\n')      // Collapse >= 3 newlines to 2
+    .trim();                         // Trim leading/trailing overall whitespace
+}
