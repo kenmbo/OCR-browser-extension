@@ -22,3 +22,54 @@ browser.runtime.onInstalled.addListener(async () => {
   });
 });
 
+// --- Tab-Level Guard & Context Handling ---
+
+function isRestrictedUrl(url) {
+  if (!url) return true;
+  try {
+    const parsed = new URL(url);
+    if (RESTRICTED_SCHEMES.includes(parsed.protocol)) return true;
+    if (RESTRICTED_HOSTS.some(host => parsed.hostname.includes(host))) return true;
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function notifyRestricted(tabId) {
+  browser.notifications.create({
+    type: 'basic',
+    iconUrl: browser.runtime.getURL('icons/icon-48.png'),
+    title: 'OCR Unavailable',
+    message: 'Local OCR cannot run on internal browser or web store pages.'
+  });
+}
+
+browser.action.onClicked.addListener(async (tab) => {
+  if (isRestrictedUrl(tab.url)) {
+    notifyRestricted(tab.id);
+    return;
+  }
+  try {
+    await browser.tabs.sendMessage(tab.id, { type: 'START_SELECTION' });
+  } catch (err) {
+    console.error('Failed to trigger selection mode:', err);
+  }
+});
+
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'ocr-image-context' && tab) {
+    if (isRestrictedUrl(tab.url)) {
+      notifyRestricted(tab.id);
+      return;
+    }
+    try {
+      await browser.tabs.sendMessage(tab.id, {
+        type: 'PROCESS_CONTEXT_IMAGE',
+        srcUrl: info.srcUrl
+      });
+    } catch (err) {
+      console.error('Failed to dispatch context menu OCR:', err);
+    }
+  }
+});
