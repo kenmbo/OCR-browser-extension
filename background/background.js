@@ -147,3 +147,25 @@ async function processNextJob() {
     processNextJob();
   }
 }
+
+// --- Cancellation & Queue Pruning ---
+
+async function cancelTabJobs(targetTabId) {
+  const { ocrQueue = [] } = await browser.storage.session.get('ocrQueue');
+  const filteredQueue = ocrQueue.filter(job => job.tabId !== targetTabId);
+  await browser.storage.session.set({ ocrQueue: filteredQueue });
+
+  // If the active job belongs to the canceled tab, hard-kill the worker to abort execution
+  if (activeJob && activeJob.tabId === targetTabId) {
+    await terminateWorker();
+    activeJob = null;
+    isProcessing = false;
+    processNextJob();
+  }
+}
+
+// Clean up when tabs close
+browser.tabs.onRemoved.addListener((closedTabId) => {
+  activePorts.delete(closedTabId);
+  cancelTabJobs(closedTabId);
+});
