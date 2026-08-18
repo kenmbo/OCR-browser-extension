@@ -169,3 +169,50 @@ browser.tabs.onRemoved.addListener((closedTabId) => {
   activePorts.delete(closedTabId);
   cancelTabJobs(closedTabId);
 });
+
+// --- Message Router ---
+
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const tabId = sender?.tab?.id;
+
+  switch (message.type) {
+    case 'CAPTURE_AND_ENQUEUE': {
+      browser.tabs.captureVisibleTab(null, { format: 'png' }).then((dataUrl) => {
+        const job = {
+          id: crypto.randomUUID(),
+          tabId: tabId,
+          imagePayload: message.imagePayload || dataUrl,
+          timestamp: Date.now()
+        };
+        enqueueJob(job);
+      }).catch(err => {
+        notifyTab(tabId, { type: 'OCR_ERROR', error: 'Viewport capture failed: ' + err.message });
+      });
+      break;
+    }
+
+    case 'ENQUEUE_DIRECT_IMAGE': {
+      const job = {
+        id: crypto.randomUUID(),
+        tabId: tabId,
+        imagePayload: message.imagePayload,
+        timestamp: Date.now()
+      };
+      enqueueJob(job);
+      break;
+    }
+
+    case 'CANCEL_ACTIVE_JOB': {
+      if (tabId) cancelTabJobs(tabId);
+      break;
+    }
+
+    case 'WRITE_CLIPBOARD': {
+      // Delegate clipboard write to background context
+      navigator.clipboard.writeText(message.text)
+        .then(() => sendResponse({ success: true }))
+        .catch(err => sendResponse({ success: false, error: err.message }));
+      return true; // Keep message channel open for async response
+    }
+  }
+});
