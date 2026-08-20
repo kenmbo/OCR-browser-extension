@@ -33,4 +33,38 @@
 
     return keepAlivePort;
   }
+
+// --- Runtime Message Listener ---
+
+  browser.runtime.onMessage.addListener((msg) => {
+    handlePipelineMessage(msg);
+  });
+
+  function handlePipelineMessage(msg) {
+    switch (msg.type) {
+      case 'START_SELECTION':
+        initSelectionMode();
+        break;
+      case 'PROCESS_CONTEXT_IMAGE':
+        processContextImage(msg.srcUrl);
+        break;
+      case 'OCR_QUEUED':
+        ensurePort();
+        getOrCreateResultPanel().showQueued(msg.queuePosition);
+        break;
+      case 'OCR_START':
+        getOrCreateResultPanel().showProcessing();
+        break;
+      case 'OCR_PROGRESS':
+        getOrCreateResultPanel().updateProgress(msg.progress);
+        break;
+      case 'OCR_COMPLETE':
+        getOrCreateResultPanel().showResult(msg.text, msg.confidence);
+        break;
+      case 'OCR_ERROR':
+        getOrCreateResultPanel().showError(msg.error);
+        break;
+    }
+  }
+
 })();
