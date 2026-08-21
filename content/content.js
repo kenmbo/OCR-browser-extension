@@ -67,4 +67,44 @@
     }
   }
 
+// --- Context Menu Image Extraction ---
+
+  async function processContextImage(srcUrl) {
+    ensurePort();
+    const img = lastRightClickedElement instanceof HTMLImageElement ? lastRightClickedElement : null;
+
+    if (img && img.src === srcUrl && img.complete && img.naturalWidth > 0) {
+      // Calculate visible intersection with viewport
+      const rect = img.getBoundingClientRect();
+      const visibleX = Math.max(0, rect.left);
+      const visibleY = Math.max(0, rect.top);
+      const visibleRight = Math.min(window.innerWidth, rect.right);
+      const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+
+      const visibleW = visibleRight - visibleX;
+      const visibleH = visibleBottom - visibleY;
+
+      if (visibleW > MIN_SELECTION_SIZE && visibleH > MIN_SELECTION_SIZE) {
+        // Image partially/fully in view: extract via offscreen canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = visibleW;
+        canvas.height = visibleH;
+        const ctx = canvas.getContext('2d');
+
+        const sourceX = (visibleX - rect.left) * (img.naturalWidth / rect.width);
+        const sourceY = (visibleY - rect.top) * (img.naturalHeight / rect.height);
+        const sourceW = visibleW * (img.naturalWidth / rect.width);
+        const sourceH = visibleH * (img.naturalHeight / rect.height);
+
+        try {
+          ctx.drawImage(img, sourceX, sourceY, sourceW, sourceH, 0, 0, visibleW, visibleH);
+          const dataUrl = canvas.toDataURL('image/png');
+          browser.runtime.sendMessage({ type: 'ENQUEUE_DIRECT_IMAGE', imagePayload: dataUrl });
+          return;
+        } catch {
+          // Fallback to fetch if canvas is tainted by CORS
+        }
+      }
+    }
+
 })();
