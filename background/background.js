@@ -89,6 +89,31 @@ browser.runtime.onConnect.addListener((port) => {
   });
 });
 
+// --- Worker Lifecycle Management ---
+
+async function getWorker() {
+  if (tesseractWorker) return tesseractWorker;
+
+  // Import local Tesseract scripts inside service worker/background context
+  if (typeof importScripts === 'function') {
+    importScripts(
+      browser.runtime.getURL('vendor/browser-polyfill.min.js'),
+      browser.runtime.getURL('vendor/tesseract.min.js')
+    );
+  }
+
+  const worker = await Tesseract.createWorker('eng', 1, {
+    workerPath: browser.runtime.getURL('vendor/worker.min.js'),
+    corePath: browser.runtime.getURL('vendor/tesseract-core.wasm.js'),
+    langPath: browser.runtime.getURL('tessdata'),
+    gzip: false,
+    logger: (m) => handleWorkerProgress(m)
+  });
+
+  tesseractWorker = worker;
+  return tesseractWorker;
+}
+
 // --- Text Normalization Pipeline ---
 
 function normalizeOcrText(rawText) {
