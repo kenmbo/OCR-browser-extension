@@ -107,4 +107,18 @@
       }
     }
 
+    // Direct page fetch fallback to avoid host permissions
+    try {
+      const response = await fetch(srcUrl);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        browser.runtime.sendMessage({ type: 'ENQUEUE_DIRECT_IMAGE', imagePayload: reader.result });
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      getOrCreateResultPanel().showError('Failed to extract image source: ' + err.message);
+    }
+  }
+
 })();
