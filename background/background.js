@@ -114,6 +114,17 @@ async function getWorker() {
   return tesseractWorker;
 }
 
+async function terminateWorker() {
+  if (tesseractWorker) {
+    try {
+      await tesseractWorker.terminate();
+    } catch (err) {
+      console.warn('Error during worker termination:', err);
+    }
+    tesseractWorker = null;
+  }
+}
+
 // --- Text Normalization Pipeline ---
 
 function normalizeOcrText(rawText) {
