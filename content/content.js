@@ -121,4 +121,22 @@
     }
   }
 
+// --- Viewport Selection Canvas ---
+
+  function initSelectionMode() {
+    // Reset previous selection instance if re-triggered
+    teardownSelectionCanvas();
+
+    selectionCanvas = document.createElement('canvas');
+    selectionCanvas.id = 'ocr-selection-overlay';
+    Object.assign(selectionCanvas.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100vw',
+      height: '100vh',
+      zIndex: '2147483646',
+      cursor: 'crosshair'
+    });
+
 })();
