@@ -125,6 +125,19 @@ async function terminateWorker() {
   }
 }
 
+function handleWorkerProgress(progressEvent) {
+  if (!activeJob) return;
+
+  if (progressEvent.status === 'recognizing text') {
+    const progress = Math.round((progressEvent.progress || 0) * 100);
+    notifyTab(activeJob.tabId, {
+      type: 'OCR_PROGRESS',
+      jobId: activeJob.id,
+      progress
+    });
+  }
+}
+
 // --- Text Normalization Pipeline ---
 
 function normalizeOcrText(rawText) {
