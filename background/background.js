@@ -127,7 +127,7 @@ async function terminateWorker() {
 
 function handleWorkerProgress(progressEvent) {
   if (!activeJob) return;
-
+  
   if (progressEvent.status === 'recognizing text') {
     const progress = Math.round((progressEvent.progress || 0) * 100);
     notifyTab(activeJob.tabId, {
@@ -150,6 +150,20 @@ function normalizeOcrText(rawText) {
 }
 
 // --- FIFO Queue Processor ---
+
+async function enqueueJob(job) {
+  const { ocrQueue = [] } = await browser.storage.session.get('ocrQueue');
+  ocrQueue.push(job);
+  await browser.storage.session.set({ ocrQueue });
+
+  notifyTab(job.tabId, {
+    type: 'OCR_QUEUED',
+    jobId: job.id,
+    queuePosition: ocrQueue.length
+  });
+
+  processNextJob();
+}
 
 async function processNextJob() {
   if (isProcessing) return;
@@ -195,6 +209,21 @@ async function processNextJob() {
     activeJob = null;
     processNextJob();
   }
+}
+
+function notifyTab(tabId, message) {
+  const port = activePorts.get(tabId);
+  if (port) {
+    try {
+      port.postMessage(message);
+      return;
+    } catch {
+      activePorts.delete(tabId);
+    }
+  }
+  browser.tabs.sendMessage(tabId, message).catch(() => {
+    // Tab may be closed or unloaded
+  });
 }
 
 // --- Cancellation & Queue Pruning ---
