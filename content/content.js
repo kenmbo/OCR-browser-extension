@@ -172,6 +172,70 @@
     }
   }
 
+  function onMouseDown(e) {
+    if (e.button !== 0) return;
+    isSelecting = true;
+    startX = e.clientX;
+    startY = e.clientY;
+  }
+
+  function onMouseMove(e) {
+    if (!isSelecting || !selectionCanvas) return;
+
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+    const width = currentX - startX;
+    const height = currentY - startY;
+
+    const ctx = selectionCanvas.getContext('2d');
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // Dim background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+    // Clear active selection rectangle
+    ctx.clearRect(startX, startY, width, height);
+
+    // Bounding border
+    ctx.strokeStyle = '#0066FF';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(startX, startY, width, height);
+  }
+
+  async function onMouseUp(e) {
+    if (!isSelecting) return;
+    isSelecting = false;
+
+    const endX = e.clientX;
+    const endY = e.clientY;
+
+    const x = Math.min(startX, endX);
+    const y = Math.min(startY, endY);
+    const width = Math.abs(endX - startX);
+    const height = Math.abs(endY - startY);
+
+    teardownSelectionCanvas();
+
+    // Minimum size check (10x10 CSS px)
+    if (width < MIN_SELECTION_SIZE || height < MIN_SELECTION_SIZE) {
+      return; // Treat as accidental click / dismissal
+    }
+
+    ensurePort();
+
+    // Request capture of visible tab and crop to selection bounds
+    const dpr = window.devicePixelRatio;
+    const cropBox = {
+      x: Math.round(x * dpr),
+      y: Math.round(y * dpr),
+      w: Math.round(width * dpr),
+      h: Math.round(height * dpr)
+    };
+
+    cropVisibleViewport(cropBox);
+  }
+
   function cropVisibleViewport(cropBox) {
     // Message background to capture visible viewport, then crop locally
     browser.runtime.sendMessage({ type: 'CAPTURE_AND_ENQUEUE' });
