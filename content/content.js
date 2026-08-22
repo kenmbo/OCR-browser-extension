@@ -153,4 +153,15 @@
     document.documentElement.appendChild(selectionCanvas);
   }
 
+  function teardownSelectionCanvas() {
+    if (!selectionCanvas) return;
+    selectionCanvas.removeEventListener('mousedown', onMouseDown);
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
+    window.removeEventListener('keydown', onSelectionKeyDown, true);
+    selectionCanvas.remove();
+    selectionCanvas = null;
+    isSelecting = false;
+  }
+
 })();
