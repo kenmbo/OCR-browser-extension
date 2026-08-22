@@ -164,4 +164,12 @@
     isSelecting = false;
   }
 
+function onSelectionKeyDown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      teardownSelectionCanvas();
+    }
+  }
+
 })();
