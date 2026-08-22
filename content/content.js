@@ -139,4 +139,18 @@
       cursor: 'crosshair'
     });
 
+    selectionCanvas.width = window.innerWidth * window.devicePixelRatio;
+    selectionCanvas.height = window.innerHeight * window.devicePixelRatio;
+
+    const ctx = selectionCanvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    selectionCanvas.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('keydown', onSelectionKeyDown, true);
+
+    document.documentElement.appendChild(selectionCanvas);
+  }
+
 })();
