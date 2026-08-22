@@ -164,12 +164,20 @@
     isSelecting = false;
   }
 
-function onSelectionKeyDown(e) {
+  function onSelectionKeyDown(e) {
     if (e.key === 'Escape') {
       e.preventDefault();
       e.stopPropagation();
       teardownSelectionCanvas();
     }
+  }
+
+  function cropVisibleViewport(cropBox) {
+    // Message background to capture visible viewport, then crop locally
+    browser.runtime.sendMessage({ type: 'CAPTURE_AND_ENQUEUE' });
+
+    // Store crop box for when capture stream initializes
+    window._pendingOcrCrop = cropBox;
   }
 
 })();
