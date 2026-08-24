@@ -36,8 +36,17 @@ OCR-browser-extension/
 │   └── tesseract-core.wasm.js    # WASM runtime wrapper
 ├── tessdata/
 │   └── eng.traineddata           # Local bundled English OCR model
+├── tests/fixtures/
+│   ├── synthetic/
+│   ├── geometry/
+│   ├── adversial/
+│   ├── pages/
+│   └── storage/
 └── icons/
     ├── icon-16.png
     ├── icon-48.png
     └── icon-128.png
 ```
+
+# Permisssions
+Copying uses an in-frame three-stage fallback (navigator.clipboard.writeText via iframe allow="clipboard-write", gesture-bound execCommand("copy"), and focusable selectable plaintext).
