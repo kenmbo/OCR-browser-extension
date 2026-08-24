@@ -321,4 +321,16 @@
       }
     }
     window.addEventListener('keydown', onPanelKeyDown, true);
+
+    copyBtn.addEventListener('click', async () => {
+      const textToCopy = ocrOutput.textContent || '';
+      try {
+        await browser.runtime.sendMessage({ type: 'WRITE_CLIPBOARD', text: textToCopy });
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = 'Copy Text'; }, 2000);
+      } catch (err) {
+        copyBtn.textContent = 'Failed';
+      }
+    });
+
 })();
