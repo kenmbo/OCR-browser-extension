@@ -295,4 +295,13 @@
     shadowRoot.appendChild(container);
     document.documentElement.appendChild(host);
 
+    const closeBtn = container.querySelector('.close-btn');
+    const copyBtn = container.querySelector('.copy-btn');
+    const statusText = container.querySelector('.status-text');
+    const progressBar = container.querySelector('.progress-bar-fill');
+    const statusView = container.querySelector('.status-view');
+    const ocrOutput = container.querySelector('.ocr-output');
+    const footer = container.querySelector('.footer');
+    const confidenceBadge = container.querySelector('.confidence-badge');
+
 })();
