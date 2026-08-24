@@ -267,4 +267,32 @@
 
     const shadowRoot = host.attachShadow({ mode: 'open' });
 
+
+    const container = document.createElement('div');
+    container.className = 'panel';
+
+    container.innerHTML = `
+      <div class="header">
+        <span class="title">Local OCR</span>
+        <button class="close-btn" title="Close (Esc)">✕</button>
+      </div>
+      <div class="body">
+        <div class="status-view">
+          <div class="status-text">Initializing OCR Engine...</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill"></div>
+          </div>
+        </div>
+        <pre class="ocr-output" style="display: none;"></pre>
+      </div>
+      <div class="footer" style="display: none;">
+        <span class="confidence-badge">Confidence: --%</span>
+        <button class="copy-btn">Copy Text</button>
+      </div>
+    `;
+
+    shadowRoot.appendChild(style);
+    shadowRoot.appendChild(container);
+    document.documentElement.appendChild(host);
+
 })();
