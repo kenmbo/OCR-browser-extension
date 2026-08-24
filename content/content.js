@@ -267,6 +267,9 @@
 
     const shadowRoot = host.attachShadow({ mode: 'open' });
 
+    const style = document.createElement('style');
+    style.textContent = `:host { all: initial; font-family: -apple-system, 
+    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;}`;
 
     const container = document.createElement('div');
     container.className = 'panel';
