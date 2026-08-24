@@ -304,4 +304,21 @@
     const footer = container.querySelector('.footer');
     const confidenceBadge = container.querySelector('.confidence-badge');
 
+    function dismiss() {
+      browser.runtime.sendMessage({ type: 'CANCEL_ACTIVE_JOB' });
+      host.remove();
+      panelInstance = null;
+    }
+
+    closeBtn.addEventListener('click', dismiss);
+
+    // Esc key listener scoped to dismiss panel without propagating to host page
+    function onPanelKeyDown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        dismiss();
+      }
+    }
+    window.addEventListener('keydown', onPanelKeyDown, true);
 })();
