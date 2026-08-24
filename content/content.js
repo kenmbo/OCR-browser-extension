@@ -244,4 +244,27 @@
     window._pendingOcrCrop = cropBox;
   }
 
+// --- Shadow DOM Result Overlay ---
+
+  let panelInstance = null;
+
+  function getOrCreateResultPanel() {
+    if (panelInstance && document.getElementById('ocr-shadow-host')) {
+      return panelInstance;
+    }
+
+    const existingHost = document.getElementById('ocr-shadow-host');
+    if (existingHost) existingHost.remove();
+
+    const host = document.createElement('div');
+    host.id = 'ocr-shadow-host';
+    Object.assign(host.style, {
+      position: 'fixed',
+      bottom: '24px',
+      right: '24px',
+      zIndex: '2147483647'
+    });
+
+    const shadowRoot = host.attachShadow({ mode: 'open' });
+
 })();
