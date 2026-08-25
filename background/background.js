@@ -4,6 +4,7 @@
 
 const RESTRICTED_SCHEMES = ['chrome:', 'about:', 'edge:', 'chrome-extension:', 'moz-extension:'];
 const RESTRICTED_HOSTS = ['chromewebstore.google.com', 'addons.mozilla.org'];
+const MAX_QUEUE_CAPACITY = 8; // 1 active + 7 queued
 
 let tesseractWorker = null;
 let isProcessing = false;
@@ -293,4 +294,28 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true; // Keep message channel open for async response
     }
   }
+});
+
+// -- Capacity Guard
+
+async function canAcceptJob() {
+  const { ocrQueue = [] } = await browser.storage.session.get('ocrQueue');
+  const currentTotal = ocrQueue.length + (isProcessing ? 1 : 0);
+  return currentTotal < MAX_QUEUE_CAPACITY;
+}
+
+// Pre-flight check before triggering screenshot selection
+browser.action.onClicked.addListener(async (tab) => {
+  if (isRestrictedUrl(tab.url)) {
+    notifyRestricted(tab.id);
+    return;
+  }
+
+  const hasCapacity = await canAcceptJob();
+  if (!hasCapacity) {
+    notifyQueueFull(tab.id);
+    return;
+  }
+
+  browser.tabs.sendMessage(tab.id, { type: 'START_SELECTION' });
 });
