@@ -319,3 +319,25 @@ browser.action.onClicked.addListener(async (tab) => {
 
   browser.tabs.sendMessage(tab.id, { type: 'START_SELECTION' });
 });
+
+// Guard context-menu ingestion
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'ocr-image-context' && tab) {
+    if (isRestrictedUrl(tab.url)) {
+      notifyRestricted(tab.id);
+      return;
+    }
+
+    const hasCapacity = await canAcceptJob();
+    if (!hasCapacity) {
+      notifyQueueFull(tab.id);
+      return;
+    }
+
+    browser.tabs.sendMessage(tab.id, {
+      type: 'PROCESS_CONTEXT_IMAGE',
+      srcUrl: info.srcUrl
+    });
+  }
+});
+
