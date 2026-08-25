@@ -341,3 +341,18 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
+function notifyQueueFull(tabId) {
+  // Option A: Push notification to the tab's Shadow DOM overlay
+  notifyTab(tabId, {
+    type: 'OCR_ERROR',
+    error: 'OCR queue is full (maximum 8 jobs). Please wait for active tasks to finish.'
+  });
+
+  // Option B: Native browser notification fallback if content script isn't active
+  browser.notifications.create({
+    type: 'basic',
+    iconUrl: browser.runtime.getURL('icons/icon-48.png'),
+    title: 'Queue Full',
+    message: 'OCR queue is at capacity (8/8). Please wait for existing jobs to finish.'
+  });
+}
