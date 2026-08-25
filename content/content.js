@@ -34,7 +34,7 @@
     return keepAlivePort;
   }
 
-// --- Runtime Message Listener ---
+  // --- Runtime Message Listener ---
 
   browser.runtime.onMessage.addListener((msg) => {
     handlePipelineMessage(msg);
@@ -67,7 +67,7 @@
     }
   }
 
-// --- Context Menu Image Extraction ---
+  // --- Context Menu Image Extraction ---
 
   async function processContextImage(srcUrl) {
     ensurePort();
@@ -121,7 +121,7 @@
     }
   }
 
-// --- Viewport Selection Canvas ---
+  // --- Viewport Selection Canvas ---
 
   function initSelectionMode() {
     // Reset previous selection instance if re-triggered
@@ -244,7 +244,7 @@
     window._pendingOcrCrop = cropBox;
   }
 
-// --- Shadow DOM Result Overlay ---
+  // --- Shadow DOM Result Overlay ---
 
   let panelInstance = null;
 
@@ -268,8 +268,103 @@
     const shadowRoot = host.attachShadow({ mode: 'open' });
 
     const style = document.createElement('style');
-    style.textContent = `:host { all: initial; font-family: -apple-system, 
-    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;}`;
+    style.textContent = `
+      :host {
+        all: initial;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      .panel {
+        width: 360px;
+        max-height: 480px;
+        background: #1E1E24;
+        color: #F4F4F6;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #33333F;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #282832;
+        border-bottom: 1px solid #33333F;
+      }
+      .title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .close-btn {
+        background: transparent;
+        border: none;
+        color: #9E9EA8;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .close-btn:hover {
+        background: #3A3A48;
+        color: #FFF;
+      }
+      .body {
+        padding: 12px 14px;
+        overflow-y: auto;
+        font-size: 13px;
+        line-height: 1.5;
+        flex: 1;
+      }
+      .status {
+        color: #9E9EA8;
+        font-style: italic;
+      }
+      .progress-bar-bg {
+        height: 6px;
+        background: #33333F;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: #0066FF;
+        width: 0%;
+        transition: width 0.15s ease-out;
+      }
+      .ocr-output {
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+        font-family: inherit;
+      }
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        background: #282832;
+        border-top: 1px solid #33333F;
+        font-size: 11px;
+        color: #9E9EA8;
+      }
+      .copy-btn {
+        background: #0066FF;
+        color: #FFF;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .copy-btn:hover {
+        background: #0052CC;
+      }
+    `;
 
     const container = document.createElement('div');
     container.className = 'panel';
