@@ -154,6 +154,16 @@ function normalizeOcrText(rawText) {
 
 async function enqueueJob(job) {
   const { ocrQueue = [] } = await browser.storage.session.get('ocrQueue');
+  const totalInFlight = ocrQueue.length + (isProcessing ? 1 : 0);
+
+  if (totalInFlight >= MAX_QUEUE_CAPACITY) {
+    notifyTab(job.tabId, {
+      type: 'OCR_ERROR',
+      error: 'OCR queue reached capacity before your job could be registered.'
+    });
+    return false;
+  }
+
   ocrQueue.push(job);
   await browser.storage.session.set({ ocrQueue });
 
