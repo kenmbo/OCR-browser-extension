@@ -464,6 +464,11 @@
         footer.style.display = 'none';
         statusText.textContent = `Error: ${errMsg}`;
         progressBar.style.width = '0%';
+      },
+      destroy() {
+        window.removeEventListener('keydown', onPanelKeyDown, true);
+        host.remove();
+        panelInstance = null;
       }
     };
 
