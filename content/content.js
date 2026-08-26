@@ -450,7 +450,21 @@
         statusView.style.display = 'block';
         statusText.textContent = `Recognizing text (${percent}%)...`;
         progressBar.style.width = `${percent}%`;
-      };
+      },
+      showResult(text, confidence) {
+        statusView.style.display = 'none';
+        ocrOutput.style.display = 'block';
+        footer.style.display = 'flex';
+        ocrOutput.textContent = text || '[No text detected]';
+        confidenceBadge.textContent = `Confidence: ${confidence}%`;
+      },
+      showError(errMsg) {
+        statusView.style.display = 'block';
+        ocrOutput.style.display = 'none';
+        footer.style.display = 'none';
+        statusText.textContent = `Error: ${errMsg}`;
+        progressBar.style.width = '0%';
+      }
     };
 
     return panelInstance;
