@@ -430,6 +430,7 @@
         copyBtn.textContent = 'Failed';
       }
     });
+
     panelInstance = {
       showQueued(position) {
         statusView.style.display = 'block';
@@ -437,7 +438,21 @@
         footer.style.display = 'none';
         statusText.textContent = `Queued (Position #${position})...`;
         progressBar.style.width = '0%';
-      }
+      },
+      showProcessing() {
+        statusView.style.display = 'block';
+        ocrOutput.style.display = 'none';
+        footer.style.display = 'none';
+        statusText.textContent = 'Processing OCR (WASM)...';
+        progressBar.style.width = '5%';
+      },
+      updateProgress(percent) {
+        statusView.style.display = 'block';
+        statusText.textContent = `Recognizing text (${percent}%)...`;
+        progressBar.style.width = `${percent}%`;
+      };
     };
+
     return panelInstance;
+  }
 })();
