@@ -50,3 +50,11 @@ OCR-browser-extension/
 
 # Permisssions
 Copying uses an in-frame three-stage fallback (navigator.clipboard.writeText via iframe allow="clipboard-write", gesture-bound execCommand("copy"), and focusable selectable plaintext).
+
+# Testing
+Planned testing::
+* OCR validation
+* Resource-ceiling testing
+* CI testing
+ - Online Lane
+ - Offline Lane
