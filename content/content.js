@@ -67,6 +67,25 @@
     }
   }
 
+  // --- Prevent multiple simultaneous script initializations ---
+  if (window.__LOCAL_OCR_INITIALIZED__) {
+    return;
+  }
+  window.__LOCAL_OCR_INITIALIZED__ = true;
+
+  // Unique ID for this specific document lifecycle
+  const documentInstanceId = crypto.randomUUID();
+  window.__LOCAL_OCR_DOC_INSTANCE_ID__ = documentInstanceId;
+
+  // Stamped on all outbound messages to reject stale background responses
+  function sendMessageToBackground(payload) {
+    return browser.runtime.sendMessage({
+      ...payload,
+      documentInstanceId
+    });
+  }
+
+
   // --- Context Menu Image Extraction ---
 
   async function processContextImage(srcUrl) {
