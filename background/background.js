@@ -145,6 +145,7 @@ function normalizeOcrText(rawText) {
   if (!rawText) return '';
   return rawText
     .replace(/\r\n|\r/g, '\n')       // CRLF/CR -> LF
+    .replace(/\r/g, '\n')            // Normalize standalone CR to LF
     .replace(/[ \t]+$/gm, '')        // Strip trailing line whitespace
     .replace(/\n{3,}/g, '\n\n')      // Collapse >= 3 newlines to 2
     .trim();                         // Trim leading/trailing overall whitespace
