@@ -164,9 +164,9 @@
     const ctx = selectionCanvas.getContext('2d');
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
-    selectionCanvas.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    selectionCanvas.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('keydown', onSelectionKeyDown, true);
 
     document.documentElement.appendChild(selectionCanvas);
@@ -174,9 +174,9 @@
 
   function teardownSelectionCanvas() {
     if (!selectionCanvas) return;
-    selectionCanvas.removeEventListener('mousedown', onMouseDown);
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
+    selectionCanvas.removeEventListener('pointerdown', onPointerDown);
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
     window.removeEventListener('keydown', onSelectionKeyDown, true);
     selectionCanvas.remove();
     selectionCanvas = null;
@@ -191,14 +191,14 @@
     }
   }
 
-  function onMouseDown(e) {
+  function onPointerDown(e) {
     if (e.button !== 0) return;
     isSelecting = true;
     startX = e.clientX;
     startY = e.clientY;
   }
 
-  function onMouseMove(e) {
+  function onPointerMove(e) {
     if (!isSelecting || !selectionCanvas) return;
 
     const currentX = e.clientX;
@@ -222,7 +222,7 @@
     ctx.strokeRect(startX, startY, width, height);
   }
 
-  async function onMouseUp(e) {
+  async function onPointerUp(e) {
     if (!isSelecting) return;
     isSelecting = false;
 
