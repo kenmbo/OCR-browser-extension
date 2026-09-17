@@ -8,7 +8,10 @@
     "node": "24.20.0"
   },
   "scripts": {
+    "typecheck": "pnpm run typecheck:shared && pnpm run typecheck:chromium && pnpm run typecheck:firefox && pnpm run typecheck:tools && pnpm run typecheck:tests",
     "typecheck:shared": "tsc --noEmit -p tsconfig.shared.json",
+    "typecheck:chromium": "tsc --noEmit -p tsconfig.chromium.json",
+    "typecheck:firefox": "tsc --noEmit -p tsconfig.firefox.json",
     "typecheck:tools": "tsc --noEmit -p tsconfig.tools.json",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "lint": "eslint src tools tests vitest.config.ts --max-warnings 0",
@@ -34,6 +37,8 @@
   },
   "devDependencies": {
     	"@eslint/js": "10.0.1",
+	"@types/chrome": "0.2.9",
+	"@types/firefox-webext-browser": "143.0.0",
     	"@types/node": "24.13.4",
 	"eslint": "10.10.0",
 	"typescript-eslint": "8.70.0",
