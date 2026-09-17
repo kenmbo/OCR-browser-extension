@@ -8,6 +8,8 @@
     "node": "24.20.0"
   },
   "scripts": {
+    "format": "prettier --write --ignore-unknown package.json pnpm-workspace.yaml tsconfig.json tsconfig.shared.json tsconfig.chromium.json tsconfig.firefox.json tsconfig.tools.json tsconfig.tests.json eslint.config.js vitest.config.ts src static tools tests docs/development.md docs/source-boundaries.md",
+    "format:check": "prettier --check --ignore-unknown package.json pnpm-workspace.yaml tsconfig.json tsconfig.shared.json tsconfig.chromium.json tsconfig.firefox.json tsconfig.tools.json tsconfig.tests.json eslint.config.js vitest.config.ts src static tools tests docs/development.md docs/source-boundaries.md",
     "typecheck": "pnpm run typecheck:shared && pnpm run typecheck:chromium && pnpm run typecheck:firefox && pnpm run typecheck:tools && pnpm run typecheck:tests",
     "typecheck:shared": "tsc --noEmit -p tsconfig.shared.json",
     "typecheck:chromium": "tsc --noEmit -p tsconfig.chromium.json",
@@ -36,14 +38,17 @@
     "verify:m1": "pnpm run format:check && pnpm run typecheck && pnpm run lint && pnpm run test:unit && pnpm run check:toolchain && pnpm run check:lockfile && pnpm run check:dependencies && pnpm run check:licenses && pnpm run check:imports && pnpm run check:manifests && pnpm run assembly:build && pnpm run check:assemblies && pnpm run check:reproducibility && pnpm run package:local && pnpm run check:archives && pnpm run check:archive-reproducibility && pnpm run check:immutable-install"
   },
   "devDependencies": {
-    	"@eslint/js": "10.0.1",
-	"@types/chrome": "0.2.9",
-	"@types/firefox-webext-browser": "143.0.0",
-    	"@types/node": "24.13.4",
-	"eslint": "10.10.0",
-	"typescript-eslint": "8.70.0",
-	"vite": "8.3.0",
-	"vitest": "5.0.1",
-	"yaml": "2.9.1"
-    }
+    "@eslint/js": "10.0.1",
+    "@types/chrome": "0.2.9",
+    "@types/firefox-webext-browser": "143.0.0",
+    "@types/node": "24.13.4",
+    "eslint": "10.10.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vite": "8.3.0",
+    "vitest": "5.0.1",
+    "yaml": "2.9.1"
+  }
 }
+
