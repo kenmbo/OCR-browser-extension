@@ -15,10 +15,13 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "skipLibCheck": false,
     "strict": true,
-    "target": "ES2022"
+    "target": "ES2022",
+    "useUnknownInCatchVariables": true,
+    "verbatimModuleSyntax": true
   },
   "files": []
 }
