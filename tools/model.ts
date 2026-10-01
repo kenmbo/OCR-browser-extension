@@ -68,6 +68,16 @@ export type PreparationVendorIdentity =
       readonly version: "140.0esr" | "156.0";
     }
   | {
+      readonly assetId: 483347579;
+      readonly assetName: "geckodriver-v0.37.1-linux64.tar.gz";
+      readonly kind: "geckodriver-release";
+      readonly owner: "mozilla";
+      readonly releaseId: 356643350;
+      readonly repository: "geckodriver";
+      readonly tag: "v0.37.1";
+      readonly version: "0.37.1";
+    }
+  | {
       readonly artifact: "chrome" | "chromedriver";
       readonly kind: "chrome-for-testing";
       readonly platform: "linux64";
