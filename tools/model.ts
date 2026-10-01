@@ -60,6 +60,26 @@ export type PreparationTerminalPolicy =
       readonly tag: "v0.37.1";
     };
 
+export type PreparationVendorIdentity =
+  | {
+      readonly kind: "mozilla-firefox-release";
+      readonly locale: "en-US";
+      readonly platform: "linux-x86_64";
+      readonly version: "140.0esr" | "156.0";
+    }
+  | {
+      readonly artifact: "chrome" | "chromedriver";
+      readonly kind: "chrome-for-testing";
+      readonly platform: "linux64";
+      readonly revision: "1160321";
+      readonly version: "116.0.5845.96";
+    }
+  | {
+      readonly authority: "debian" | "mozilla";
+      readonly kind: "reviewed-signing-key";
+      readonly revision: ReviewedSigningKeyIdentity;
+    };
+
 export interface PreparationDestination {
   readonly path: string;
   readonly role: "downloads" | "metadata" | "trust";
@@ -77,7 +97,6 @@ export interface PreparationOperation {
   readonly vendorIdentity: PreparationVendorIdentity;
   readonly verificationKind: PreparationVerificationKind;
 }
-
 
 export interface PreparationPlan {
   readonly architecture: "x86_64";
