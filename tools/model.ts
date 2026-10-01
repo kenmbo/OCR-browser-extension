@@ -77,5 +77,14 @@ export interface PreparationOperation {
   readonly vendorIdentity: PreparationVendorIdentity;
   readonly verificationKind: PreparationVerificationKind;
 }
+
+
+export interface PreparationPlan {
+  readonly architecture: "x86_64";
+  readonly operations: readonly PreparationOperation[];
+  readonly planRevision: typeof PREPARATION_PLAN_REVISION;
+  readonly platform: "linux";
+  readonly preparationPolicyRevision: typeof PREPARATION_POLICY_REVISION;
+  readonly schemaVersion: typeof PREPARATION_PLAN_SCHEMA_VERSION;
 }
 
